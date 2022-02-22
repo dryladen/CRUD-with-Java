@@ -3,16 +3,16 @@ package crud;
 public class Item {
     private String name;
     private float price;
-    private int stock;
+    private int amount;
 
     public Item() {
 
     }
 
-    public Item(String name, float price, int stock) {
+    public Item(String name, float price, int amount) {
         this.name = name;
         this.price = price;
-        this.stock = stock;
+        this.amount = amount;
     }
 
     public String getName() {
@@ -31,12 +31,12 @@ public class Item {
         this.price = price;
     }
 
-    public int getStock() {
-        return stock;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
 }
