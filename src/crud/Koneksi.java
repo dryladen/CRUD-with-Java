@@ -64,15 +64,21 @@ public class Koneksi {
         return item;
     }
 
-    public void addItem(String nama, Float price, int amount) {
-
+    public void addItem(String nama, Float price, int amount) throws SQLException {
+        sql = "INSERT INTO Item (nama,price,amount) VALUES ('%s','%f','%d')";
+        sql = String.format(sql,
+                nama, price, amount);
+        Connection cn = getKoneksi();
+        pst = cn.prepareStatement(sql);
+        pst.execute();
+        pst.close();
     }
 
     public void updateItem(String nama, Float price, int amount, int id) {
         try {
             sql = "UPDATE Item SET nama='?',price=?,amount=? WHERE id=?";
-            // Connection cn = koneksi.getKoneksi();
-            pst = koneksi.prepareStatement(sql);
+            Connection cn = getKoneksi();
+            pst = cn.prepareStatement(sql);
             pst.setString(1, nama);
             pst.setFloat(2, price);
             pst.setInt(3, amount);

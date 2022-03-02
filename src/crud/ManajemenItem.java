@@ -3,6 +3,7 @@ package crud;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -19,6 +20,7 @@ public class ManajemenItem {
     private Koneksi koneksi;
     private JScrollPane data;
     private JFrame frameTable;
+    private int lastID = 1;
 
     public ManajemenItem() {
         input = new BufferedReader(new InputStreamReader(System.in));
@@ -33,6 +35,7 @@ public class ManajemenItem {
         koneksi.getData(dataItem);
         for (Item item : dataItem) {
             tblModel.addRow(new Object[] { item.getId(), item.getName(), item.getPrice(), item.getAmount() });
+            this.lastID++;
         }
     }
 
@@ -45,11 +48,13 @@ public class ManajemenItem {
             newItem.setPrice(Float.parseFloat(input.readLine()));
             System.out.print("Input Amount : ");
             newItem.setAmount(Integer.parseInt(input.readLine()));
-            // koneksi.addItem();
+            koneksi.addItem(newItem.getName(), newItem.getPrice(), newItem.getAmount());
             this.tblModel.addRow(
-                    new Object[] { newItem.getId(), newItem.getName(), newItem.getPrice(), newItem.getAmount() });
+                    new Object[] { this.lastID, newItem.getName(), newItem.getPrice(), newItem.getAmount() });
         } catch (NumberFormatException e) {
             System.out.println("Input Error !!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,6 +93,6 @@ public class ManajemenItem {
     }
 
     public void end() {
-
+        frameTable.dispose();
     }
 }
