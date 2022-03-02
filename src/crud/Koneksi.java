@@ -25,7 +25,7 @@ public class Koneksi {
         String fileAbsolutePath = getFilePath.concat("\\databaseitem.db");
         if (isDatabaseExists(fileAbsolutePath)) {
             try {
-                koneksi = DriverManager.getConnection(url);
+                this.koneksi = DriverManager.getConnection(url);
             } catch (SQLException ex) {
                 Logger.getLogger(Koneksi.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, "Error koneksi database : " + ex);
@@ -49,7 +49,7 @@ public class Koneksi {
             stm = cn.createStatement();
             result = stm.executeQuery("SELECT * FROM Item");
             while (result.next()) {
-                item.add(new Item(result.getString(1), result.getFloat(2), result.getInt(3)));
+                item.add(new Item(result.getInt(4), result.getString(1), result.getFloat(2), result.getInt(3)));
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error : " + ex);
@@ -62,6 +62,30 @@ public class Koneksi {
             }
         }
         return item;
+    }
+
+    public void addItem(String nama, Float price, int amount) {
+
+    }
+
+    public void updateItem(String nama, Float price, int amount, int id) {
+        try {
+            sql = "UPDATE Item SET nama='?',price=?,amount=? WHERE id=?";
+            // Connection cn = koneksi.getKoneksi();
+            pst = koneksi.prepareStatement(sql);
+            pst.setString(1, nama);
+            pst.setFloat(2, price);
+            pst.setInt(3, amount);
+            pst.setInt(4, id);
+            pst.execute();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error : " + ex);
+        } finally {
+            try {
+                pst.close();
+            } catch (SQLException ex) {
+            }
+        }
     }
     // private void createNewDatabase(){
     // Connection conn;
