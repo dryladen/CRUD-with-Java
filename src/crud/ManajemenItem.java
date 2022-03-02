@@ -62,14 +62,17 @@ public class ManajemenItem {
     public void updateItem() throws IOException {
         System.out.print("Masukan id item : ");
         this.itemSearch = input.readLine();
-        for (Item item : this.dataItem) {
-            if (item.getId() == Integer.parseInt(this.itemSearch)) {
+        for (int i = 0; i < dataItem.size(); i -= -1) {
+            if (dataItem.get(i).getId() == Integer.parseInt(this.itemSearch)) {
                 System.out.print("Input new Price  : ");
-                item.setPrice(Float.parseFloat(input.readLine()));
+                dataItem.get(i).setPrice(Float.parseFloat(input.readLine()));
                 System.out.print("Input new Amount : ");
-                item.setAmount(Integer.parseInt(input.readLine()));
+                dataItem.get(i).setAmount(Integer.parseInt(input.readLine()));
                 System.out.println("Update Complete");
-                koneksi.updateItem(item.getName(), item.getPrice(), item.getAmount(), item.getId());
+                koneksi.updateItem(dataItem.get(i).getName(), dataItem.get(i).getPrice(), dataItem.get(i).getAmount(),
+                        dataItem.get(i).getId());
+                tblModel.setValueAt(dataItem.get(i).getPrice(), i, 2);
+                tblModel.setValueAt(dataItem.get(i).getAmount(), i, 3);
                 return;
             }
         }
