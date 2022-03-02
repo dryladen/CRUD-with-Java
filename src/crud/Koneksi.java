@@ -74,9 +74,9 @@ public class Koneksi {
         pst.close();
     }
 
-    public void updateItem(String nama, Float price, int amount, int id) {
+    public void updateItem(String nama, float price, int amount, int id) {
         try {
-            sql = "UPDATE Item SET nama='?',price=?,amount=? WHERE id=?";
+            sql = "UPDATE Item SET nama=?,price=?,amount=? WHERE id=?";
             Connection cn = getKoneksi();
             pst = cn.prepareStatement(sql);
             pst.setString(1, nama);
@@ -92,6 +92,10 @@ public class Koneksi {
             } catch (SQLException ex) {
             }
         }
+    }
+
+    public void deleteItem() {
+
     }
     // private void createNewDatabase(){
     // Connection conn;

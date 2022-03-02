@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -59,19 +60,20 @@ public class ManajemenItem {
     }
 
     public void updateItem() throws IOException {
-        System.out.print("Masukan nama item : ");
+        System.out.print("Masukan id item : ");
         this.itemSearch = input.readLine();
         for (Item item : this.dataItem) {
-            if (item.getName().equals(this.itemSearch)) {
+            if (item.getId() == Integer.parseInt(this.itemSearch)) {
                 System.out.print("Input new Price  : ");
                 item.setPrice(Float.parseFloat(input.readLine()));
                 System.out.print("Input new Amount : ");
                 item.setAmount(Integer.parseInt(input.readLine()));
                 System.out.println("Update Complete");
                 koneksi.updateItem(item.getName(), item.getPrice(), item.getAmount(), item.getId());
-                break;
+                return;
             }
         }
+        JOptionPane.showMessageDialog(null, "Item tidak ditemukan", "Info", 1);
     }
 
     public void deleteItem() throws IOException {
