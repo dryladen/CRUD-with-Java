@@ -49,7 +49,7 @@ public class Koneksi {
             stm = cn.createStatement();
             result = stm.executeQuery("SELECT * FROM Item");
             while (result.next()) {
-                item.add(new Item(result.getInt(4), result.getString(1), result.getFloat(2), result.getInt(3)));
+                item.add(new Item(result.getInt(1), result.getString(2), result.getFloat(3), result.getInt(4)));
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error : " + ex);
@@ -64,14 +64,18 @@ public class Koneksi {
         return item;
     }
 
-    public void addItem(String nama, Float price, int amount) throws SQLException {
-        sql = "INSERT INTO Item (nama,price,amount) VALUES ('%s','%f','%d')";
-        sql = String.format(sql,
-                nama, price, amount);
-        Connection cn = getKoneksi();
-        pst = cn.prepareStatement(sql);
-        pst.execute();
-        pst.close();
+    public void addItem(String nama, Float price, int amount) {
+        try {
+            sql = "INSERT INTO Item (nama,price,amount) VALUES ('%s','%f','%d')";
+            sql = String.format(sql,
+                    nama, price, amount);
+            Connection cn = getKoneksi();
+            pst = cn.prepareStatement(sql);
+            pst.execute();
+            pst.close();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }
 
     public void updateItem(String nama, float price, int amount, int id) {
@@ -90,12 +94,21 @@ public class Koneksi {
             try {
                 pst.close();
             } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex);
             }
         }
     }
 
-    public void deleteItem() {
-
+    public void deleteItem(int id) {
+        try {
+            String sql = "DELETE FROM Item WHERE id=?";
+            Connection cn = getKoneksi();
+            pst = cn.prepareStatement(sql);
+            pst.setInt(1, id);
+            pst.execute();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }
     // private void createNewDatabase(){
     // Connection conn;
@@ -104,7 +117,7 @@ public class Koneksi {
     // conn = DriverManager.getConnection(url);
     // if(conn != null){
     // try {
-    // sql = "CREATE TABLE \"kategoriTable\" (\n" +
+    // sql = "CREATE TABLE \"Item\" (\n" +
     // " \"idKategori\" INTEGER NOT NULL,\n" +
     // " \"namaKategori\" TEXT DEFAULT NULL,\n" +
     // " \"tanggalKategori\" TEXT DEFAULT NULL,\n" +

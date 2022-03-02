@@ -3,7 +3,6 @@ package crud;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -36,7 +35,7 @@ public class ManajemenItem {
         koneksi.getData(dataItem);
         for (Item item : dataItem) {
             tblModel.addRow(new Object[] { item.getId(), item.getName(), item.getPrice(), item.getAmount() });
-            this.lastID++;
+            this.lastID = item.getId();
         }
     }
 
@@ -50,19 +49,18 @@ public class ManajemenItem {
             System.out.print("Input Amount : ");
             newItem.setAmount(Integer.parseInt(input.readLine()));
             koneksi.addItem(newItem.getName(), newItem.getPrice(), newItem.getAmount());
+            this.lastID++;
             this.tblModel.addRow(
                     new Object[] { this.lastID, newItem.getName(), newItem.getPrice(), newItem.getAmount() });
         } catch (NumberFormatException e) {
             System.out.println("Input Error !!");
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
     public void updateItem() throws IOException {
         System.out.print("Masukan id item : ");
         this.itemSearch = input.readLine();
-        for (int i = 0; i < dataItem.size(); i -= -1) {
+        for (int i = 0; i <= dataItem.size(); i -= -1) {
             if (dataItem.get(i).getId() == Integer.parseInt(this.itemSearch)) {
                 System.out.print("Input new Price  : ");
                 dataItem.get(i).setPrice(Float.parseFloat(input.readLine()));
@@ -80,12 +78,22 @@ public class ManajemenItem {
     }
 
     public void deleteItem() throws IOException {
-        System.out.print("Masukan nama item : ");
+        System.out.print("Masukan id item : ");
         this.itemSearch = input.readLine();
-        for (int i = 0; i < dataItem.size(); i -= -1) {
-            if (this.dataItem.get(i).getName().equals(this.itemSearch)) {
-                this.dataItem.remove(i);
-                System.out.println("Delete Complete");
+        for (int i = 0; i <= dataItem.size(); i -= -1) {
+            if (this.dataItem.get(i).getId() == Integer.parseInt(itemSearch)) {
+                if (i == dataItem.size() - 1) {
+                    this.lastID = dataItem.get(i).getId();
+                    koneksi.deleteItem(dataItem.get(i).getId());
+                    dataItem.remove(i);
+                    tblModel.removeRow(i);
+                } else {
+                    koneksi.deleteItem(dataItem.get(i).getId());
+                    dataItem.remove(i);
+                    tblModel.removeRow(i);
+                    this.lastID = dataItem.get(dataItem.size() - 1).getId();
+                }
+                JOptionPane.showMessageDialog(null, "Delete Complete", "Information", 1);
                 break;
             }
         }
