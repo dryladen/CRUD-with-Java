@@ -1,8 +1,6 @@
 package crud;
 
-// import java.io.BufferedReader;
 import java.io.IOException;
-// import java.io.InputStreamReader;
 import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -12,7 +10,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class ManajemenItem {
-    // private BufferedReader input;
     private DefaultTableModel tblModel;
     private ArrayList<Item> dataItem;
     private JTable table;
@@ -23,40 +20,22 @@ public class ManajemenItem {
     private int lastID = 1;
 
     public ManajemenItem() {
-        // input = new BufferedReader(new InputStreamReader(System.in));
-        tblModel = new DefaultTableModel();
-        dataItem = new ArrayList<Item>();
         frameTable = new JFrame("List Item");
-        koneksi = new Koneksi();
+        tblModel = new DefaultTableModel();
         table = new JTable();
-        data = new JScrollPane(table);
-        this.tblModel.setColumnIdentifiers(new String[] { "Id", "Name", "Price", "Amount" });
-        this.table.setModel(this.tblModel);
+        koneksi = new Koneksi();
+        dataItem = new ArrayList<Item>();
         frameTable.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
         koneksi.getData(dataItem);
-        for (Item item : dataItem) {
-            tblModel.addRow(new Object[] { item.getId(), item.getName(), item.getPrice(), item.getAmount() });
-            this.lastID = item.getId();
-        }
     }
 
     public void menu() throws IOException {
         JDialog.setDefaultLookAndFeelDecorated(true);
         String menu[] = { "1. Create Item", "2. Update Item", "3.Delete Item", "4. Show Item", "5. Search", "6. Exit" };
         String selectMenu = "0";
-        while (!selectMenu.equals("6")) {
+        while (!selectMenu.equals("6. Exit")) {
             selectMenu = (String) JOptionPane.showInputDialog(null, "Login", "Welcome to CRUD program",
                     JOptionPane.INFORMATION_MESSAGE, null, menu, "1. Create Item");
-            // System.out.println("Welcome to CRUD program");
-            // System.out.println(">> MENU <<");
-            // System.out.println("1. Create Item");
-            // System.out.println("2. Update Item");
-            // System.out.println("3. Delete Item");
-            // System.out.println("4. Show Item");
-            // System.out.println("5. Search Item");
-            // System.out.println("6. Exit");
-            // System.out.print("Select Menu : ");
-            // selectMenu = input.readLine();
             switch (selectMenu) {
                 case "1. Create Item":
                     addItem();
@@ -68,10 +47,11 @@ public class ManajemenItem {
                     deleteItem();
                     break;
                 case "4. Show Item":
-                    displayItem();
+                    clearTable();
+                    displayItem(this.dataItem);
                     break;
                 case "5. Search":
-                    System.out.println("Menu 5");
+                    searchItem();
                     break;
                 case "6. Exit":
                     end();
@@ -86,11 +66,6 @@ public class ManajemenItem {
     public void addItem() throws IOException {
         try {
             Item newItem = new Item();
-            // System.out.print("Input Name : ");
-            // System.out.print("Input Price : ");
-            // newItem.setPrice(Float.parseFloat(input.readLine()));
-            // System.out.print("Input Amount : ");
-            // newItem.setAmount(Integer.parseInt(input.readLine()));
             newItem.setName(JOptionPane.showInputDialog("Input Name"));
             newItem.setPrice(Float.parseFloat(JOptionPane.showInputDialog("Input Price")));
             newItem.setAmount(Integer.parseInt(JOptionPane.showInputDialog("Input Amount")));
@@ -104,16 +79,9 @@ public class ManajemenItem {
     }
 
     public void updateItem() throws IOException {
-        // System.out.print("Masukan id item : ");
-        // this.itemSearch = input.readLine();
         this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
         for (int i = 0; i <= dataItem.size(); i -= -1) {
             if (dataItem.get(i).getId() == Integer.parseInt(this.itemSearch)) {
-                // System.out.print("Input new Price : ");
-                // dataItem.get(i).setPrice(Float.parseFloat(input.readLine()));
-                // System.out.print("Input new Amount : ");
-                // dataItem.get(i).setAmount(Integer.parseInt(input.readLine()));
-                // System.out.println("Update Complete");
                 dataItem.get(i).setPrice(Float.parseFloat(JOptionPane.showInputDialog("Input Price")));
                 dataItem.get(i).setAmount(Integer.parseInt(JOptionPane.showInputDialog("Input Amount")));
                 koneksi.updateItem(dataItem.get(i).getName(), dataItem.get(i).getPrice(), dataItem.get(i).getAmount(),
@@ -128,8 +96,6 @@ public class ManajemenItem {
     }
 
     public void deleteItem() throws IOException {
-        // System.out.print("Masukan id item : ");
-        // this.itemSearch = input.readLine();
         this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
         for (int i = 0; i <= dataItem.size(); i -= -1) {
             if (this.dataItem.get(i).getId() == Integer.parseInt(itemSearch)) {
@@ -150,13 +116,84 @@ public class ManajemenItem {
         }
     }
 
-    public void displayItem() {
+    public void displayItem(ArrayList<Item> dataItem) {
+        this.tblModel.setColumnIdentifiers(new String[] { "Id", "Name", "Price", "Amount" });
+        this.table.setModel(this.tblModel);
+        data = new JScrollPane(table);
+        // add row
+        for (Item item : dataItem) {
+            tblModel.addRow(new Object[] { item.getId(), item.getName(), item.getPrice(), item.getAmount() });
+            this.lastID = item.getId();
+        }
+        // display to table
         frameTable.add(data);
-        frameTable.setBounds(400, 100, 600, 220);
+        frameTable.setBounds(400, 50, 600, 220);
         frameTable.setVisible(true);
+    }
+
+    public void clearTable() {
+        this.tblModel.setRowCount(0);
     }
 
     public void end() {
         frameTable.dispose();
+    }
+
+    public int shellSort(ArrayList<Item> dataItem) {
+        int n = dataItem.size();
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            // Do a gapped insertion sort for this gap size.
+            // The first gap elements a[0..gap-1] are already
+            // in gapped order keep adding one more element
+            // until the entire array is gap sorted
+            for (int i = gap; i < n; i += 1) {
+                // add a[i] to the elements that have been gap
+                // sorted save a[i] in temp and make a hole at
+                // position i
+                Item temp = dataItem.get(i);
+                // shift earlier gap-sorted elements up until
+                // the correct location for a[i] is found
+                int j;
+                for (j = i; j >= gap && dataItem.get(j - gap).getId() > temp.getId(); j -= gap) {
+                    dataItem.set(j, dataItem.get(j - gap));
+                }
+                // put temp (the original a[i]) in its correct
+                // location
+                dataItem.set(j, temp);
+            }
+        }
+        return 0;
+    }
+
+    public void searchItem() {
+        this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
+        binarySearch(dataItem, 0, dataItem.size() - 1, Integer.parseInt(itemSearch));
+        // JOptionPane.showMessageDialog(null, "Item tidak ditemukan", "Info", 1);
+    }
+
+    public int binarySearch(ArrayList<Item> data, int l, int r, int id) {
+        if (r >= l) {
+            int mid = l + (r - l) / 2;
+            // If the element is present at the
+            // middle itself
+            if (data.get(mid).getId() == id) {
+                ArrayList<Item> dataCari = new ArrayList<>();
+                clearTable();
+                dataCari.add(data.get(mid));
+                displayItem(dataCari);
+                return mid;
+            }
+            // If element is smaller than mid, then
+            // it can only be present in left subarray
+            if (data.get(mid).getId() > id)
+                return binarySearch(data, l, mid - 1, id);
+            // Else the element can only be present
+            // in right subarray
+            return binarySearch(data, mid + 1, r, id);
+        }
+        // We reach here when element is not present
+        // in array
+        JOptionPane.showMessageDialog(null, "Item tidak ditemukan", "Info", 1);
+        return -1;
     }
 }
