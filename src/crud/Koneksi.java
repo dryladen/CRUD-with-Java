@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import java.io.File;
 
 public class Koneksi {
+    // ! Nama database yang digunakan & pastikan database sudah dibuat
     private final String url = "jdbc:sqlite:databaseitem.db";
     private PreparedStatement pst;
     private Connection koneksi;
@@ -20,7 +21,7 @@ public class Koneksi {
         return database.exists();
     }
 
-    public Connection getKoneksi() { // menghubungkan ke database
+    public Connection getKoneksi() { // ! menghubungkan ke database
         String getFilePath = new File("").getAbsolutePath();
         String fileAbsolutePath = getFilePath.concat("\\databaseitem.db");
         if (isDatabaseExists(fileAbsolutePath)) {
@@ -31,15 +32,6 @@ public class Koneksi {
                 JOptionPane.showMessageDialog(null, "Error koneksi database : " + ex);
             }
         }
-        // } else {
-        // createNewDatabase();
-        // try {
-        // koneksi = DriverManager.getConnection(url);
-        // } catch (SQLException ex) {
-        // Logger.getLogger(Koneksi.class.getName()).log(Level.SEVERE, null, ex);
-        // JOptionPane.showMessageDialog(null, "Error create database : "+ ex);
-        // }
-        // }
         return koneksi;
     }
 
@@ -64,11 +56,11 @@ public class Koneksi {
         return item;
     }
 
-    public void addItem(String nama, Float price, int amount) {
+    public void addItem(Item item) {
         try {
             sql = "INSERT INTO Item (nama,price,amount) VALUES ('%s','%f','%d')";
             sql = String.format(sql,
-                    nama, price, amount);
+                    item.getName(), item.getPrice(), item.getAmount());
             Connection cn = getKoneksi();
             pst = cn.prepareStatement(sql);
             pst.execute();
@@ -78,15 +70,15 @@ public class Koneksi {
         }
     }
 
-    public void updateItem(String nama, float price, int amount, int id) {
+    public void updateItem(Item item) {
         try {
             sql = "UPDATE Item SET nama=?,price=?,amount=? WHERE id=?";
             Connection cn = getKoneksi();
             pst = cn.prepareStatement(sql);
-            pst.setString(1, nama);
-            pst.setFloat(2, price);
-            pst.setInt(3, amount);
-            pst.setInt(4, id);
+            pst.setString(1, item.getName());
+            pst.setFloat(2, item.getPrice());
+            pst.setInt(3, item.getAmount());
+            pst.setInt(4, item.getId());
             pst.execute();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error : " + ex);
@@ -110,55 +102,4 @@ public class Koneksi {
             JOptionPane.showMessageDialog(null, ex);
         }
     }
-    // private void createNewDatabase(){
-    // Connection conn;
-    // try {
-    // Class.forName("org.sqlite.JDBC");
-    // conn = DriverManager.getConnection(url);
-    // if(conn != null){
-    // try {
-    // sql = "CREATE TABLE \"Item\" (\n" +
-    // " \"idKategori\" INTEGER NOT NULL,\n" +
-    // " \"namaKategori\" TEXT DEFAULT NULL,\n" +
-    // " \"tanggalKategori\" TEXT DEFAULT NULL,\n" +
-    // " \"deskripsiKategori\" TEXT DEFAULT NULL,\n" +
-    // " PRIMARY KEY(\"idKategori\" AUTOINCREMENT)\n" +
-    // ")";
-    // Statement kategoriTable = conn.createStatement();
-    // kategoriTable.execute(sql);
-    // sql = "CREATE TABLE \"kegiatanTable\" (\n" +
-    // " \"idKegiatan\" INTEGER NOT NULL,\n" +
-    // " \"namaKegiatan\" TEXT DEFAULT NULL,\n" +
-    // " \"tanggalKegiatan\" TEXT DEFAULT NULL,\n" +
-    // " \"deskripsiKegiatan\" TEXT DEFAULT NULL,\n" +
-    // " \"idKategori\" INTEGER NOT NULL,\n" +
-    // " \"isCheck\" INTEGER DEFAULT 0,\n" +
-    // " FOREIGN KEY(\"idKategori\") REFERENCES
-    // \"kategoriTable\"(\"idKategori\"),\n" +
-    // " PRIMARY KEY(\"idKegiatan\" AUTOINCREMENT)\n" +
-    // ")";
-    // Statement kegiatanTable = conn.createStatement();
-    // kegiatanTable.execute(sql);
-    // sql = "CREATE TABLE \"lokasiTable\" (\n" +
-    // " \"getX\" INTEGER DEFAULT NULL,\n" +
-    // " \"getY\" INTEGER DEFAULT NULL,\n" +
-    // " \"width\" INTEGER DEFAULT NULL,\n" +
-    // " \"height\" INTEGER DEFAULT NULL\n" +
-    // ")";
-    // Statement lokasiTable = conn.createStatement();
-    // lokasiTable.execute(sql);
-    // sql = "INSERT INTO lokasiTable (getX,getY,width,height) VALUES
-    // (0,0,312,386)";
-    // PreparedStatement pst = conn.prepareStatement(sql);
-    // pst.execute();
-    // } catch (SQLException ex){
-    // Logger.getLogger(Koneksi.class.getName()).log(Level.SEVERE, null, ex);
-    // JOptionPane.showMessageDialog(null, "Create database error : "+ ex);
-    // }
-    // }
-    // } catch (SQLException | ClassNotFoundException ex) {
-    // Logger.getLogger(Koneksi.class.getName()).log(Level.SEVERE, null, ex);
-    // JOptionPane.showMessageDialog(null, "Create databases error : "+ ex);
-    // }
-    // }
 }

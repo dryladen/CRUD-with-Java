@@ -26,6 +26,7 @@ public class ManajemenItem {
         koneksi = new Koneksi();
         dataItem = new ArrayList<Item>();
         frameTable.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+        // ! Memasukan data dari database kedalam arraylist
         koneksi.getData(dataItem);
     }
 
@@ -36,6 +37,9 @@ public class ManajemenItem {
         while (!selectMenu.equals("6. Exit")) {
             selectMenu = (String) JOptionPane.showInputDialog(null, "Login", "Welcome to CRUD program",
                     JOptionPane.INFORMATION_MESSAGE, null, menu, "1. Create Item");
+            if (selectMenu == null) {
+                break;
+            }
             switch (selectMenu) {
                 case "1. Create Item":
                     addItem();
@@ -67,52 +71,87 @@ public class ManajemenItem {
         try {
             Item newItem = new Item();
             newItem.setName(JOptionPane.showInputDialog("Input Name"));
+            // ! jika inputan kosong
+            if (newItem.getName().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Input tidak boleh kosong", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             newItem.setPrice(Float.parseFloat(JOptionPane.showInputDialog("Input Price")));
             newItem.setAmount(Integer.parseInt(JOptionPane.showInputDialog("Input Amount")));
-            koneksi.addItem(newItem.getName(), newItem.getPrice(), newItem.getAmount());
+            // ! Error handling jika input <= 0
+            if (newItem.getPrice() <= 0 || newItem.getAmount() <= 0) {
+                JOptionPane.showMessageDialog(null, "Input angka > 1", "Error", 0);
+                return;
+            }
+            // ! Menambahkan data baru ke database
+            koneksi.addItem(newItem);
             this.lastID++;
+            // ! Menambahkan data baru ke JTable
             this.tblModel.addRow(
                     new Object[] { this.lastID, newItem.getName(), newItem.getPrice(), newItem.getAmount() });
         } catch (NumberFormatException e) {
-            System.out.println("Input Error !!");
+            JOptionPane.showMessageDialog(null, "Input Error", "Error", 0);
+        } catch (NullPointerException e) { // ! jika menekan button cancel
+            return;
         }
     }
 
     public void updateItem() throws IOException {
-        this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
-        for (int i = 0; i <= dataItem.size(); i -= -1) {
-            if (dataItem.get(i).getId() == Integer.parseInt(this.itemSearch)) {
-                dataItem.get(i).setPrice(Float.parseFloat(JOptionPane.showInputDialog("Input Price")));
-                dataItem.get(i).setAmount(Integer.parseInt(JOptionPane.showInputDialog("Input Amount")));
-                koneksi.updateItem(dataItem.get(i).getName(), dataItem.get(i).getPrice(), dataItem.get(i).getAmount(),
-                        dataItem.get(i).getId());
-                tblModel.setValueAt(dataItem.get(i).getPrice(), i, 2);
-                tblModel.setValueAt(dataItem.get(i).getAmount(), i, 3);
-                JOptionPane.showMessageDialog(null, "Update Complete", "Info", 1);
-                return;
+        try {
+            this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
+            for (int i = 0; i <= dataItem.size(); i -= -1) {
+                if (dataItem.get(i).getId() == Integer.parseInt(this.itemSearch)) {
+                    // ! Update kedalam ArrayList
+                    dataItem.get(i).setPrice(Float.parseFloat(JOptionPane.showInputDialog("Input Price")));
+                    dataItem.get(i).setAmount(Integer.parseInt(JOptionPane.showInputDialog("Input Amount")));
+                    // ! Update kedalam JTable
+                    tblModel.setValueAt(dataItem.get(i).getPrice(), i, 2);
+                    tblModel.setValueAt(dataItem.get(i).getAmount(), i, 3);
+                    // ! Update kedalam database
+                    koneksi.updateItem(dataItem.get(i));
+                    JOptionPane.showMessageDialog(null, "Update Complete", "Info", 1);
+                    return;
+                }
             }
+            JOptionPane.showMessageDialog(null, "Item tidak ditemukan", "Info", 1);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Input Error", "Error", 0);
+        } catch (NullPointerException e) { // ! jika menekan button cancel
+            return;
         }
-        JOptionPane.showMessageDialog(null, "Item tidak ditemukan", "Info", 1);
     }
 
     public void deleteItem() throws IOException {
-        this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
-        for (int i = 0; i <= dataItem.size(); i -= -1) {
-            if (this.dataItem.get(i).getId() == Integer.parseInt(itemSearch)) {
-                if (i == dataItem.size() - 1) {
-                    this.lastID = dataItem.get(i).getId();
-                    koneksi.deleteItem(dataItem.get(i).getId());
-                    dataItem.remove(i);
-                    tblModel.removeRow(i);
-                } else {
-                    koneksi.deleteItem(dataItem.get(i).getId());
-                    dataItem.remove(i);
-                    tblModel.removeRow(i);
-                    this.lastID = dataItem.get(dataItem.size() - 1).getId();
+        try {
+            this.itemSearch = JOptionPane.showInputDialog(null, "Input ID");
+            for (int i = 0; i <= dataItem.size(); i -= -1) {
+                if (this.dataItem.get(i).getId() == Integer.parseInt(itemSearch)) {
+                    // ! Jika data yang dihapus adalah data terakhir
+                    if (i == dataItem.size() - 1) {
+                        this.lastID = dataItem.get(i).getId();
+                        // ! Delete kedalam ArrayList
+                        dataItem.remove(i);
+                        // ! Delete kedalam JTable
+                        tblModel.removeRow(i);
+                        // ! Delete kedalam Database
+                        koneksi.deleteItem(dataItem.get(i).getId());
+                    } else {
+                        // ! Delete kedalam ArrayList
+                        dataItem.remove(i);
+                        // ! Delete kedalam JTable
+                        tblModel.removeRow(i);
+                        // ! Delete kedalam Database
+                        koneksi.deleteItem(dataItem.get(i).getId());
+                        this.lastID = dataItem.get(dataItem.size() - 1).getId();
+                    }
+                    JOptionPane.showMessageDialog(null, "Delete Complete", "Information", 1);
+                    break;
                 }
-                JOptionPane.showMessageDialog(null, "Delete Complete", "Information", 1);
-                break;
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Input Error", "Error", 0);
+        } catch (NullPointerException e) { // ! jika menekan button cancel
+            return;
         }
     }
 
@@ -125,16 +164,19 @@ public class ManajemenItem {
             tblModel.addRow(new Object[] { item.getId(), item.getName(), item.getPrice(), item.getAmount() });
             this.lastID = item.getId();
         }
-        // display to table
+        // ! display to table
         frameTable.add(data);
+        // ! Set table size
         frameTable.setBounds(400, 50, 600, 220);
         frameTable.setVisible(true);
     }
 
+    // ! Clear isi table
     public void clearTable() {
         this.tblModel.setRowCount(0);
     }
 
+    // ! Close frame
     public void end() {
         frameTable.dispose();
     }
