@@ -35,6 +35,7 @@ public class Koneksi {
         return koneksi;
     }
 
+    // ! Manajement Item
     public ArrayList<Item> getData(ArrayList<Item> item) {
         try {
             Connection cn = getKoneksi();
@@ -103,6 +104,7 @@ public class Koneksi {
         }
     }
 
+    // ! Manajement User
     public ArrayList<Akun> getDataUser(ArrayList<Akun> akun) {
         try {
             Connection cn = getKoneksi();
