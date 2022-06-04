@@ -9,22 +9,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class ManajemenItem {
+public class Admin {
     private DefaultTableModel tblModel;
     private ArrayList<Item> dataItem;
-    private JTable table;
-    private String itemSearch;
-    private Koneksi koneksi;
-    private JScrollPane data;
     private JFrame frameTable;
+    private JScrollPane data;
+    private JTable table;
+    private Koneksi koneksi;
+    private String itemSearch;
     private int lastID = 1;
 
-    public ManajemenItem() {
+    public Admin() {
         frameTable = new JFrame("List Item");
         tblModel = new DefaultTableModel();
         table = new JTable();
         koneksi = new Koneksi();
         dataItem = new ArrayList<Item>();
+
         frameTable.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
         // ! Memasukan data dari database kedalam arraylist
         koneksi.getData(dataItem);

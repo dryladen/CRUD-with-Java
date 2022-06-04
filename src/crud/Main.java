@@ -1,10 +1,7 @@
 package crud;
 
 import java.io.IOException;
-// import java.io.BufferedReader;
-// import java.io.InputStreamReader;
-
-// import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,29 +15,20 @@ public class Main {
      */
 
     public static void main(String[] args) throws IOException {
-        ManajemenItem manager = new ManajemenItem();
-        manager.menu();
-        // String input = (String) JOptionPane.showInputDialog(null, "Login",
-        // "Information",
-        // JOptionPane.INFORMATION_MESSAGE, null,
-        // new String[] { "Admin", "Pembeli" }, "Admin");
-        // if (input.equals("Admin")) {
-        // } else if (input.equals("Pembeli")) {
-        // String input1 = (String) JOptionPane.showInputDialog(null, "Login",
-        // "Information",
-        // JOptionPane.INFORMATION_MESSAGE, null,
-        // new String[] { "Login", "Register" }, "Login");
-        // switch (input1) {
-        // case "Login":
-        // break;
-        // case "Register":
-        // break;
-        // default:
-        // System.out.println("Pilihan tidak tersedia");
-        // break;
-        // }
-        // JOptionPane.showMessageDialog(null, "Anjayyyy", "Information",
-        // JOptionPane.INFORMATION_MESSAGE);
-        // }
+        Admin manager = new Admin();
+        Pembeli pembeli = new Pembeli();
+        String menuAwal = (String) JOptionPane.showInputDialog(null, "Login",
+                "Information",
+                JOptionPane.INFORMATION_MESSAGE, null,
+                new String[] { "Admin", "Pembeli" }, "Admin");
+        if (menuAwal == null) {
+            JOptionPane.showMessageDialog(null, "Exit Program", "Information",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+        if (menuAwal.equals("Admin")) {
+            manager.menu();
+        } else if (menuAwal.equals("Pembeli")) {
+            pembeli.menu();
+        }
     }
 }
