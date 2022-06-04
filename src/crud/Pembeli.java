@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Pembeli {
-    private ArrayList<Akun> dataAkun;
     private Koneksi koneksi;
+    private ArrayList<Akun> dataAkun;
 
     public Pembeli() {
         koneksi = new Koneksi();
