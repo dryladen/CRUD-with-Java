@@ -103,41 +103,4 @@ public class Koneksi {
             JOptionPane.showMessageDialog(null, ex);
         }
     }
-
-    // ! Manajement User
-    public ArrayList<Akun> getDataUser(ArrayList<Akun> akun) {
-        try {
-            Connection cn = getKoneksi();
-            stm = cn.createStatement();
-            result = stm.executeQuery("SELECT * FROM User");
-            while (result.next()) {
-                akun.add(new Akun(result.getInt(1), result.getString(2), result.getString(3), result.getString(4),
-                        result.getDouble(5)));
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error : " + ex);
-        } finally {
-            try {
-                result.close();
-                stm.close();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Error set data : " + ex);
-            }
-        }
-        return akun;
-    }
-
-    public void addDataUser(Akun akun) {
-        try {
-            sql = "INSERT INTO User (username,password,nama,saldo) VALUES ('%s','%s','%s','%f')";
-            sql = String.format(sql,
-                    akun.getUsername(), akun.getPassword(), akun.getNama(), akun.getSaldo());
-            Connection cn = getKoneksi();
-            pst = cn.prepareStatement(sql);
-            pst.execute();
-            pst.close();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error : " + ex);
-        }
-    }
 }

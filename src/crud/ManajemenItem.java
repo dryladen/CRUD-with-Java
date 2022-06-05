@@ -9,7 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class Admin {
+public class ManajemenItem {
     private DefaultTableModel tblModel;
     private ArrayList<Item> dataItem;
     private JFrame frameTable;
@@ -19,7 +19,7 @@ public class Admin {
     private String itemSearch;
     private int lastID = 1;
 
-    public Admin() {
+    public ManajemenItem() {
         frameTable = new JFrame("List Item");
         tblModel = new DefaultTableModel();
         table = new JTable();
